@@ -316,7 +316,9 @@ body {
   position: absolute;
   inset: 1.1mm;
   border: 0.35mm solid var(--line);
-  border-radius: calc(var(--radius) - 1.2mm);
+  /* Radio concéntrico: el marco interno está a (grosor del borde + 1.1mm)
+     del borde exterior, así que su radio debe descontar ambos. */
+  border-radius: max(0.3mm, calc(var(--radius) - var(--border-w) - 1.1mm));
   pointer-events: none;
 }
 
