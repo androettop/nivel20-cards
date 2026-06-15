@@ -8,6 +8,32 @@ const CORS_PROXIES: ((url: string) => string)[] = [
   (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
 ];
 
+/**
+ * Convierte la URL pegada por el usuario en la URL del JSON del personaje.
+ * Acepta, por ejemplo:
+ *   https://nivel20.com/games/dnd-2024/characters/1954502-kelsier
+ *   https://nivel20.com/games/dnd-2024/campaigns/138786-luna-de-sangre/characters/1954502-kelsier
+ *   https://nivel20.com/characters/1954502.json   (ya lista)
+ *   1954502                                        (sólo el ID)
+ * y devuelve: https://nivel20.com/characters/1954502.json
+ */
+export function toCharacterJsonUrl(input: string): string {
+  const raw = input.trim();
+
+  // Sólo el ID numérico.
+  if (/^\d+$/.test(raw)) {
+    return `https://nivel20.com/characters/${raw}.json`;
+  }
+
+  // El ID es el número que sigue a /characters/ (ignora el de /campaigns/).
+  const match = raw.match(/\/characters\/(\d+)/);
+  if (match) {
+    return `https://nivel20.com/characters/${match[1]}.json`;
+  }
+
+  return raw;
+}
+
 function isProbablyCharacter(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
   const v = value as Record<string, unknown>;
@@ -24,8 +50,8 @@ async function tryParse(res: Response): Promise<unknown> {
 }
 
 export async function fetchCharacter(rawUrl: string): Promise<unknown> {
-  const url = rawUrl.trim();
-  if (!url) throw new Error("Pega la URL del personaje.");
+  if (!rawUrl.trim()) throw new Error("Pega la URL del personaje.");
+  const url = toCharacterJsonUrl(rawUrl);
 
   let parsedUrl: URL;
   try {
