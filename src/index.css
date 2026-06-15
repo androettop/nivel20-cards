@@ -351,10 +351,7 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   border: var(--border-w) solid var(--card-edge);
   border-radius: var(--radius);
-  /* Sobre el color del papel, un brillo blanco translúcido superior para que
-     funcione con cualquier color elegido. */
-  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5) 0 14%, transparent 42%),
-    var(--paper);
+  background: var(--paper);
   padding: 3mm;
   break-inside: avoid;
   page-break-inside: avoid;
