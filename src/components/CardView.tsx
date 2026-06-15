@@ -17,8 +17,9 @@ export function CardView({ card, config }: Props) {
   ]);
 
   return (
-    <article ref={cardRef} className={`card card--${card.category}`}>
-      <header className="card__header">
+    <div className="card-wrap">
+      <article ref={cardRef} className={`card card--${card.category}`}>
+        <header className="card__header">
         {config.showIcons && (
           <img
             className="card__icon"
@@ -58,6 +59,7 @@ export function CardView({ card, config }: Props) {
           <span>{card.footerRight || ""}</span>
         </footer>
       )}
-    </article>
+      </article>
+    </div>
   );
 }

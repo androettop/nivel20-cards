@@ -17,6 +17,7 @@
   --line: #6a4b2d;
   --muted: #725b43;
   --card-accent: #8a2f22;
+  --card-edge: #251911;
 }
 
 * {
@@ -296,6 +297,13 @@ body {
 }
 
 /* ===== Carta (estilo pergamino) ===== */
+.card-wrap {
+  width: var(--card-w);
+  height: var(--card-h);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 .card {
   width: var(--card-w);
   height: var(--card-h);
@@ -303,7 +311,7 @@ body {
   overflow: hidden;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
-  border: var(--border-w) solid #251911;
+  border: var(--border-w) solid var(--card-edge);
   border-radius: var(--radius);
   background: radial-gradient(circle at 50% 0%, #fff7dd 0 14%, transparent 42%),
     linear-gradient(180deg, #fff8e9, var(--paper));
@@ -322,13 +330,11 @@ body {
   pointer-events: none;
 }
 
-/* Esquinas rellenas: el borde negro exterior queda cuadrado, pero el marco
-   decorativo interno conserva el redondeado de --radius. */
-.page--square .card {
-  border-radius: 0;
-}
-.page--square .card::before {
-  border-radius: max(0.3mm, var(--radius));
+/* Esquinas rellenas: el contenedor se pinta del color del borde, rellenando
+   por detrás las esquinas redondeadas de la carta. Así el borde exterior se
+   ve cuadrado sin tocar el redondeado de la propia carta. */
+.page--square .card-wrap {
+  background: var(--card-edge);
 }
 
 .card__header {
