@@ -9,29 +9,59 @@ const CORS_PROXIES: ((url: string) => string)[] = [
 ];
 
 /**
- * Convierte la URL pegada por el usuario en la URL del JSON del personaje.
- * Acepta, por ejemplo:
+ * Genera las URLs candidatas del JSON del personaje, en orden de preferencia,
+ * a partir de la URL (o el ID) que pega el usuario. Acepta, por ejemplo:
  *   https://nivel20.com/games/dnd-2024/characters/1954502-kelsier
  *   https://nivel20.com/games/dnd-2024/campaigns/138786-luna-de-sangre/characters/1954502-kelsier
- *   https://nivel20.com/characters/1954502.json   (ya lista)
- *   1954502                                        (sólo el ID)
- * y devuelve: https://nivel20.com/characters/1954502.json
+ *   https://nivel20.com/games/dnd-2024/characters/1954502-kelsier.json  (ya lista)
+ *   1954502                                                             (sólo el ID)
+ *
+ * La forma más fiable es añadir ".json" a la RUTA COMPLETA (conservando el
+ * segmento del juego y el slug); como alternativa probamos la ruta corta
+ * /characters/<id>.json.
  */
-export function toCharacterJsonUrl(input: string): string {
+export function characterJsonCandidates(input: string): string[] {
   const raw = input.trim();
+  const out: string[] = [];
+  const add = (u: string) => {
+    if (u && !out.includes(u)) out.push(u);
+  };
 
-  // Sólo el ID numérico.
+  // Sólo el ID numérico → única opción posible.
   if (/^\d+$/.test(raw)) {
-    return `https://nivel20.com/characters/${raw}.json`;
+    add(`https://nivel20.com/characters/${raw}.json`);
+    return out;
   }
 
-  // El ID es el número que sigue a /characters/ (ignora el de /campaigns/).
-  const match = raw.match(/\/characters\/(\d+)/);
-  if (match) {
-    return `https://nivel20.com/characters/${match[1]}.json`;
+  let parsed: URL | null = null;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    /* no es una URL */
   }
 
-  return raw;
+  if (parsed) {
+    // 1) Ruta completa + ".json" (la que mejor funciona).
+    if (parsed.pathname.endsWith(".json")) {
+      add(parsed.toString());
+    } else {
+      const full = new URL(parsed.toString());
+      full.pathname = full.pathname.replace(/\/+$/, "") + ".json";
+      add(full.toString());
+    }
+    // 2) Alternativa corta /characters/<id>.json (ignora el id de campaña).
+    const match = parsed.pathname.match(/\/characters\/(\d+)/);
+    if (match) add(`https://nivel20.com/characters/${match[1]}.json`);
+  } else {
+    add(raw);
+  }
+
+  return out;
+}
+
+/** URL principal (la primera candidata); útil para mostrarla al usuario. */
+export function toCharacterJsonUrl(input: string): string {
+  return characterJsonCandidates(input)[0] ?? input.trim();
 }
 
 function isProbablyCharacter(value: unknown): boolean {
@@ -65,61 +95,71 @@ function describeError(err: unknown): string {
 
 export async function fetchCharacter(rawUrl: string): Promise<unknown> {
   if (!rawUrl.trim()) throw new Error("Pega la URL del personaje.");
-  const url = toCharacterJsonUrl(rawUrl);
 
-  let parsedUrl: URL;
-  try {
-    parsedUrl = new URL(url);
-  } catch {
-    throw new Error(`La URL no es válida: "${rawUrl.trim()}"`);
-  }
-  if (!/^https?:$/.test(parsedUrl.protocol)) {
-    throw new Error("La URL debe empezar por http:// o https://");
+  const candidates = characterJsonCandidates(rawUrl).filter((c) => {
+    try {
+      return /^https?:$/.test(new URL(c).protocol);
+    } catch {
+      return false;
+    }
+  });
+
+  if (!candidates.length) {
+    throw new Error(
+      `No reconozco la URL del personaje: "${rawUrl.trim()}". ` +
+        "Pega la dirección de la página del personaje en Nivel20.",
+    );
   }
 
-  const attempts: { label: string; url: string }[] = [
-    { label: "directo", url },
-    ...CORS_PROXIES.map((p, i) => ({ label: `proxy ${i + 1}`, url: p(url) })),
+  // Transportes: directo y, si falla (típicamente por CORS), proxies públicos.
+  const transports: { name: string; make: (u: string) => string }[] = [
+    { name: "directo", make: (u) => u },
+    ...CORS_PROXIES.map((p, i) => ({ name: `proxy ${i + 1}`, make: p })),
   ];
-  const failures: string[] = [];
 
-  console.groupCollapsed(`[nivel20-cards] Descargando personaje → ${url}`);
-  if (url !== rawUrl.trim()) {
-    console.info(`URL pegada: ${rawUrl.trim()}`);
-  }
+  const failures: string[] = [];
+  const short = (u: string) => u.replace(/^https?:\/\//, "");
+
+  console.groupCollapsed("[nivel20-cards] Descargando personaje");
+  console.info(`URL pegada: ${rawUrl.trim()}`);
+  console.info(`URLs candidatas:`, candidates);
 
   try {
-    for (const attempt of attempts) {
-      const started = performance.now();
-      try {
-        console.info(`Intento (${attempt.label}): ${attempt.url}`);
-        const res = await fetch(attempt.url, {
-          headers: { Accept: "application/json, text/plain, */*" },
-        });
-        const ms = Math.round(performance.now() - started);
+    for (const candidate of candidates) {
+      for (const t of transports) {
+        const target = t.make(candidate);
+        const tag = `${t.name} · ${short(candidate)}`;
+        const started = performance.now();
+        try {
+          console.info(`Intento [${tag}]: ${target}`);
+          const res = await fetch(target, {
+            headers: { Accept: "application/json" },
+          });
+          const ms = Math.round(performance.now() - started);
 
-        if (!res.ok) {
-          const msg = `HTTP ${res.status} ${res.statusText}`;
-          console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`);
-          failures.push(`${attempt.label}: ${msg}`);
-          continue;
+          if (!res.ok) {
+            const msg = `HTTP ${res.status} ${res.statusText}`;
+            console.warn(`  ✗ ${tag}: ${msg} (${ms} ms)`);
+            failures.push(`${tag} → ${msg}`);
+            continue;
+          }
+
+          const data = await tryParse(res);
+          if (!isProbablyCharacter(data)) {
+            const msg = "respondió, pero no parece un personaje de Nivel20";
+            console.warn(`  ✗ ${tag}: ${msg} (${ms} ms)`, data);
+            failures.push(`${tag} → ${msg}`);
+            continue;
+          }
+
+          console.info(`  ✓ ${tag}: OK (${ms} ms)`);
+          return data;
+        } catch (err) {
+          const ms = Math.round(performance.now() - started);
+          const msg = describeError(err);
+          console.warn(`  ✗ ${tag}: ${msg} (${ms} ms)`, err);
+          failures.push(`${tag} → ${msg}`);
         }
-
-        const data = await tryParse(res);
-        if (!isProbablyCharacter(data)) {
-          const msg = "respondió, pero no parece un personaje de Nivel20";
-          console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`, data);
-          failures.push(`${attempt.label}: ${msg}`);
-          continue;
-        }
-
-        console.info(`  ✓ ${attempt.label}: OK (${ms} ms)`);
-        return data;
-      } catch (err) {
-        const ms = Math.round(performance.now() - started);
-        const msg = describeError(err);
-        console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`, err);
-        failures.push(`${attempt.label}: ${msg}`);
       }
     }
   } finally {
@@ -128,9 +168,9 @@ export async function fetchCharacter(rawUrl: string): Promise<unknown> {
 
   console.error("[nivel20-cards] Todos los intentos fallaron:", failures);
   throw new Error(
-    `No se pudo obtener el personaje desde ${url}.\n` +
+    "No se pudo obtener el personaje.\n" +
       failures.map((f) => `• ${f}`).join("\n") +
-      "\n\nRevisa que la URL sea correcta. Si el problema persiste, usa " +
-      '"Pega el JSON manualmente". (Detalles en la consola del navegador).',
+      '\n\nRevisa la URL. Si persiste, usa "Pega el JSON manualmente" ' +
+      "(detalles en la consola del navegador, F12).",
   );
 }
