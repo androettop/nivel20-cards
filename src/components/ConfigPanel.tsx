@@ -34,7 +34,7 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
         </button>
       </div>
 
-      <details className="config__group">
+      <details className="config__group" open>
         <summary>Diseños</summary>
         <div className="designs">
           {DESIGN_PRESETS.map((d) => (
@@ -53,9 +53,9 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
       </details>
 
       <details className="config__group">
-        <summary>Tamaño de carta</summary>
+        <summary>Impresión</summary>
         <label className="field">
-          <span>Preajuste</span>
+          <span>Tamaño de carta</span>
           <select value={config.sizePreset} onChange={(e) => setSize(e.target.value)}>
             {SIZE_PRESETS.map((p) => (
               <option key={p.id} value={p.id}>
@@ -82,10 +82,6 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             onChange={(v) => onChange({ cardHeight: v, sizePreset: "custom" })}
           />
         </div>
-      </details>
-
-      <details className="config__group">
-        <summary>Diseño</summary>
         <RangeField
           label="Separación entre cartas"
           value={config.gap}
@@ -95,6 +91,19 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           unit="mm"
           onChange={(v) => onChange({ gap: v })}
         />
+        <RangeField
+          label="Margen de página"
+          value={config.pagePadding}
+          min={0}
+          max={20}
+          step={1}
+          unit="mm"
+          onChange={(v) => onChange({ pagePadding: v })}
+        />
+      </details>
+
+      <details className="config__group">
+        <summary>Carta</summary>
         <RangeField
           label="Redondeado"
           value={config.radius}
@@ -114,15 +123,6 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           onChange={(v) => onChange({ borderWidth: v })}
         />
         <RangeField
-          label="Margen de página"
-          value={config.pagePadding}
-          min={0}
-          max={20}
-          step={1}
-          unit="mm"
-          onChange={(v) => onChange({ pagePadding: v })}
-        />
-        <RangeField
           label="Tamaño de texto"
           value={config.fontScale}
           min={0.7}
@@ -131,10 +131,14 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           unit="×"
           onChange={(v) => onChange({ fontScale: v })}
         />
-      </details>
-
-      <details className="config__group">
-        <summary>Opciones</summary>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={config.fillCorners}
+            onChange={(e) => onChange({ fillCorners: e.target.checked })}
+          />
+          Rellenar esquinas
+        </label>
         <label className="check">
           <input
             type="checkbox"
@@ -150,14 +154,6 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             onChange={(e) => onChange({ autoFit: e.target.checked })}
           />
           Ajustar texto automáticamente
-        </label>
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={config.fillCorners}
-            onChange={(e) => onChange({ fillCorners: e.target.checked })}
-          />
-          Rellenar esquinas
         </label>
       </details>
 
@@ -188,6 +184,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           value={config.colors.line}
           onChange={(v) => onChange({ colors: { ...config.colors, line: v } })}
         />
+      </details>
+
+      <details className="config__group">
+        <summary>Fondos</summary>
         <label className="check">
           <input
             type="checkbox"
@@ -203,10 +203,6 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             onChange={(v) => onChange({ colors: { ...config.colors, box: v } })}
           />
         )}
-      </details>
-
-      <details className="config__group">
-        <summary>Fondo con el icono</summary>
         <label className="check">
           <input
             type="checkbox"
