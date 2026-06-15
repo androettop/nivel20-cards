@@ -137,8 +137,80 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             checked={config.fillCorners}
             onChange={(e) => onChange({ fillCorners: e.target.checked })}
           />
-          Rellenar esquinas (borde exterior cuadrado)
+          Rellenar esquinas
         </label>
+      </section>
+
+      <section className="config__group">
+        <h3>Colores</h3>
+        <ColorField
+          label="Borde"
+          value={config.colors.edge}
+          onChange={(v) => onChange({ colors: { ...config.colors, edge: v } })}
+        />
+        <ColorField
+          label="Papel"
+          value={config.colors.paper}
+          onChange={(v) => onChange({ colors: { ...config.colors, paper: v } })}
+        />
+        <ColorField
+          label="Texto"
+          value={config.colors.ink}
+          onChange={(v) => onChange({ colors: { ...config.colors, ink: v } })}
+        />
+        <ColorField
+          label="Acento"
+          value={config.colors.accent}
+          onChange={(v) => onChange({ colors: { ...config.colors, accent: v } })}
+        />
+        <ColorField
+          label="Línea interior"
+          value={config.colors.line}
+          onChange={(v) => onChange({ colors: { ...config.colors, line: v } })}
+        />
+      </section>
+
+      <section className="config__group">
+        <h3>Fondo con el icono</h3>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={config.iconBg}
+            onChange={(e) => onChange({ iconBg: e.target.checked })}
+          />
+          Usar el icono como fondo
+        </label>
+        {config.iconBg && (
+          <>
+            <RangeField
+              label="Opacidad"
+              value={config.iconBgOpacity}
+              min={0.02}
+              max={0.6}
+              step={0.01}
+              unit=""
+              onChange={(v) => onChange({ iconBgOpacity: v })}
+            />
+            <RangeField
+              label="Desenfoque"
+              value={config.iconBgBlur}
+              min={0}
+              max={8}
+              step={0.5}
+              unit="px"
+              onChange={(v) => onChange({ iconBgBlur: v })}
+            />
+            <RangeField
+              label="Zoom"
+              value={config.iconBgZoom}
+              min={100}
+              max={160}
+              step={5}
+              unit="%"
+              onChange={(v) => onChange({ iconBgZoom: v })}
+            />
+          </>
+        )}
       </section>
 
       <section className="config__group">
@@ -157,6 +229,27 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
         ))}
       </section>
     </aside>
+  );
+}
+
+function ColorField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label className="color-field">
+      <span>{label}</span>
+      <input
+        type="color"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
   );
 }
 

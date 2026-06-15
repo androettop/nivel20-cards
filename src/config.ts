@@ -29,8 +29,31 @@ export interface Config {
   autoFit: boolean;
   /** Esquinas rellenas: el borde negro exterior queda cuadrado. */
   fillCorners: boolean;
+  /** Colores de la carta. */
+  colors: CardColors;
+  /** Usar el icono de la carta como fondo. */
+  iconBg: boolean;
+  iconBgOpacity: number; // 0..1
+  iconBgBlur: number; // px
+  iconBgZoom: number; // % (>= 100)
   categories: Record<CardCategory, boolean>;
 }
+
+export interface CardColors {
+  edge: string; // borde exterior
+  paper: string; // fondo (papel)
+  ink: string; // texto
+  accent: string; // acento (títulos de sección, negritas)
+  line: string; // marco / líneas interiores
+}
+
+export const DEFAULT_COLORS: CardColors = {
+  edge: "#251911",
+  paper: "#fbf3df",
+  ink: "#22170f",
+  accent: "#8a2f22",
+  line: "#6a4b2d",
+};
 
 export const DEFAULT_CONFIG: Config = {
   sizePreset: "poker",
@@ -43,13 +66,18 @@ export const DEFAULT_CONFIG: Config = {
   fontScale: 1,
   showIcons: true,
   autoFit: true,
-  fillCorners: false,
+  fillCorners: true,
+  colors: DEFAULT_COLORS,
+  iconBg: false,
+  iconBgOpacity: 0.15,
+  iconBgBlur: 2,
+  iconBgZoom: 110,
   categories: Object.fromEntries(
     CATEGORY_ORDER.map((c) => [c, true]),
   ) as Record<CardCategory, boolean>,
 };
 
-const STORAGE_KEY = "nivel20-cards-config-v2";
+const STORAGE_KEY = "nivel20-cards-config-v3";
 
 export function loadConfig(): Config {
   try {
@@ -59,6 +87,7 @@ export function loadConfig(): Config {
     return {
       ...DEFAULT_CONFIG,
       ...parsed,
+      colors: { ...DEFAULT_COLORS, ...(parsed.colors ?? {}) },
       categories: { ...DEFAULT_CONFIG.categories, ...(parsed.categories ?? {}) },
     };
   } catch {

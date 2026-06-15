@@ -67,6 +67,11 @@ export default function App() {
     "--border-w": `${config.borderWidth}mm`,
     "--page-pad": `${config.pagePadding}mm`,
     "--font-scale": String(config.fontScale),
+    "--card-edge": config.colors.edge,
+    "--paper": config.colors.paper,
+    "--ink": config.colors.ink,
+    "--card-accent": config.colors.accent,
+    "--line": config.colors.line,
   } as React.CSSProperties;
 
   return (

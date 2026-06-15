@@ -16,9 +16,22 @@ export function CardView({ card, config }: Props) {
     config.fontScale,
   ]);
 
+  const showIconBg = config.iconBg && !!card.iconUrl;
+
   return (
     <div className="card-wrap">
       <article ref={cardRef} className={`card card--${card.category}`}>
+        {showIconBg && (
+          <div
+            className="card__bg"
+            style={{
+              backgroundImage: `url("${card.iconUrl}")`,
+              opacity: config.iconBgOpacity,
+              filter: `blur(${config.iconBgBlur}px)`,
+              transform: `scale(${config.iconBgZoom / 100})`,
+            }}
+          />
+        )}
         <header className="card__header">
         {config.showIcons && (
           <img
