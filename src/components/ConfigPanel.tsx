@@ -1,7 +1,9 @@
-import type { Config } from "../config";
-import { SIZE_PRESETS } from "../config";
+import type { Config, DesignPreset } from "../config";
+import { SIZE_PRESETS, DESIGN_PRESETS, DEFAULT_COLORS } from "../config";
 import { CATEGORY_LABELS, CATEGORY_ORDER } from "../types";
 import type { CardCategory } from "../types";
+
+const BASE = import.meta.env.BASE_URL;
 
 interface Props {
   config: Config;
@@ -31,6 +33,24 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           Restablecer
         </button>
       </div>
+
+      <details className="config__group">
+        <summary>Diseños</summary>
+        <div className="designs">
+          {DESIGN_PRESETS.map((d) => (
+            <button
+              key={d.id}
+              className="design"
+              type="button"
+              onClick={() => onChange(d.patch)}
+              title={`Aplicar diseño: ${d.name}`}
+            >
+              <DesignPreview patch={d.patch} />
+              <span>{d.name}</span>
+            </button>
+          ))}
+        </div>
+      </details>
 
       <details className="config__group">
         <summary>Tamaño de carta</summary>
@@ -244,6 +264,71 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
         ))}
       </details>
     </aside>
+  );
+}
+
+/** Miniatura de una carta de ejemplo con los ajustes de un diseño. */
+function DesignPreview({ patch }: { patch: DesignPreset["patch"] }) {
+  const colors = patch.colors ?? DEFAULT_COLORS;
+  const icon = `${BASE}logo.png`;
+  const vars = {
+    "--card-w": "63mm",
+    "--card-h": "88mm",
+    "--radius": `${patch.radius ?? 4}mm`,
+    "--border-w": `${patch.borderWidth ?? 3}mm`,
+    "--font-scale": "1",
+    "--card-edge": colors.edge,
+    "--paper": colors.paper,
+    "--ink": colors.ink,
+    "--card-accent": colors.accent,
+    "--line": colors.line,
+    "--box-bg": patch.boxBg ? colors.box : "transparent",
+  } as React.CSSProperties;
+
+  return (
+    <div className="design-preview" style={vars} aria-hidden>
+      <div className={`design-preview__page${patch.fillCorners ? " page--square" : ""}`}>
+        <div className="card-wrap">
+          <article className="card card--spell">
+            {patch.iconBg && (
+              <div
+                className="card__bg"
+                style={{
+                  backgroundImage: `url("${icon}")`,
+                  opacity: patch.iconBgOpacity ?? 0.15,
+                  filter: `blur(${patch.iconBgBlur ?? 2}px)`,
+                  transform: `scale(${(patch.iconBgZoom ?? 110) / 100})`,
+                }}
+              />
+            )}
+            <header className="card__header">
+              <img className="card__icon" src={icon} alt="" />
+              <div className="card__title">Conjuro de ejemplo</div>
+              <div className="card__badge">3</div>
+            </header>
+            <div className="card__subtitle">Nivel 3 · Evocación</div>
+            <section className="card__meta">
+              <div className="card__box">
+                <b>Tiempo</b>1 acción
+              </div>
+              <div className="card__box">
+                <b>Alcance</b>18 m
+              </div>
+            </section>
+            <section className="card__text">
+              <p>
+                Una descarga de energía recorre la zona y daña a quienes se
+                encuentran dentro de su radio de acción.
+              </p>
+            </section>
+            <footer className="card__footer">
+              <span>CD 15</span>
+              <span>Mago</span>
+            </footer>
+          </article>
+        </div>
+      </div>
+    </div>
   );
 }
 

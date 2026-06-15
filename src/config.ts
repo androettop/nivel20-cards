@@ -82,6 +82,50 @@ export const DEFAULT_CONFIG: Config = {
   ) as Record<CardCategory, boolean>,
 };
 
+/** Diseño predefinido: aplica un conjunto de ajustes visuales. */
+export interface DesignPreset {
+  id: string;
+  name: string;
+  patch: Partial<Config>;
+}
+
+export const DESIGN_PRESETS: DesignPreset[] = [
+  {
+    id: "parchment",
+    name: "Pergamino",
+    patch: {
+      colors: DEFAULT_COLORS,
+      boxBg: false,
+      fillCorners: true,
+      iconBg: false,
+      radius: 4,
+      borderWidth: 3,
+    },
+  },
+  {
+    id: "dark",
+    name: "Modo oscuro",
+    patch: {
+      colors: {
+        edge: "#0d0d0d",
+        paper: "#201a17",
+        ink: "#ece5d8",
+        accent: "#e0564f",
+        line: "#5a4a39",
+        box: "#2a221d",
+      },
+      boxBg: false,
+      fillCorners: true,
+      iconBg: true,
+      iconBgOpacity: 0.18,
+      iconBgBlur: 2,
+      iconBgZoom: 115,
+      radius: 4,
+      borderWidth: 3,
+    },
+  },
+];
+
 const STORAGE_KEY = "nivel20-cards-config-v3";
 
 export function loadConfig(): Config {
