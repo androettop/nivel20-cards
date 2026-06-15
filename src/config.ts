@@ -11,6 +11,7 @@ export interface CardSizePreset {
 export const SIZE_PRESETS: CardSizePreset[] = [
   { id: "poker", label: "Estándar (63 × 88)", width: 63, height: 88 },
   { id: "japanese", label: "Japonesa (59 × 86)", width: 59, height: 86 },
+  { id: "tarot", label: "Tarot (70 × 120)", width: 70, height: 120 },
   { id: "custom", label: "Personalizado", width: 63, height: 88 },
 ];
 
