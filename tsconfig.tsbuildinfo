@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/config.ts","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/components/CardView.tsx","./src/components/ConfigPanel.tsx","./src/components/useFitText.ts","./src/lib/extract.ts","./src/lib/fetchCharacter.ts","./src/lib/format.ts"],"version":"5.9.3"}

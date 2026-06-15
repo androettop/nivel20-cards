@@ -1,0 +1,529 @@
+/* ===== Marca Nivel21 (chrome de la app) ===== */
+:root {
+  --bg: #141414;
+  --bg-header: #000;
+  --panel: #1b1b1b;
+  --input: #222;
+  --border: #444;
+  --text: #fff;
+  --text-2: #e0e0e0;
+  --text-3: #b0b0b0;
+  --accent: #af090b;
+  --accent-2: #d8b36a;
+
+  /* Estética de carta (pergamino, del template original) */
+  --ink: #22170f;
+  --paper: #fbf3df;
+  --line: #6a4b2d;
+  --muted: #725b43;
+  --card-accent: #8a2f22;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Montserrat", system-ui, sans-serif;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Topbar ===== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "brand loader" "brand manual";
+  gap: 6px 20px;
+  align-items: center;
+}
+
+.brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand__logo {
+  height: 42px;
+}
+.brand h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.brand__tag {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.loader {
+  grid-area: loader;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.loader input {
+  flex: 1;
+  min-width: 240px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+.loader input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  transition: filter 0.15s ease;
+}
+.btn:hover {
+  filter: brightness(1.15);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.link-btn {
+  grid-area: manual;
+  justify-self: start;
+  background: none;
+  border: 0;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.manual {
+  padding: 12px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.manual textarea {
+  flex: 1;
+  min-height: 90px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  padding: 10px;
+  resize: vertical;
+}
+
+.error {
+  margin: 12px 20px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(175, 9, 11, 0.18);
+  border: 1px solid var(--accent);
+  color: #ffd9d9;
+  font-size: 14px;
+}
+
+/* ===== Layout ===== */
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  align-items: start;
+}
+
+.content {
+  padding: 20px;
+  min-width: 0;
+}
+
+.muted {
+  color: var(--text-3);
+}
+
+/* ===== Panel de configuración ===== */
+.config {
+  position: sticky;
+  top: 92px;
+  align-self: start;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  min-height: calc(100vh - 92px);
+}
+.config__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.config__head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.config__group {
+  border-top: 1px solid var(--border);
+  padding: 14px 0;
+}
+.config__group h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--accent-2);
+}
+
+.field {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.field > span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.field em {
+  font-style: normal;
+  color: var(--text-3);
+}
+.field input,
+.field select {
+  width: 100%;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 7px 8px;
+  font: inherit;
+}
+.field input[type="range"] {
+  padding: 0;
+  accent-color: var(--accent);
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.check input {
+  accent-color: var(--accent);
+}
+.check .count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+/* ===== Estado vacío / barra de personaje ===== */
+.empty {
+  max-width: 520px;
+  margin: 40px auto;
+  text-align: center;
+}
+.empty h2 {
+  color: var(--accent-2);
+}
+.empty ol {
+  text-align: left;
+  display: inline-block;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.char-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.char-bar__img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+.char-bar strong {
+  display: block;
+}
+.char-bar span {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.char-bar__count {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ===== Hoja de cartas ===== */
+.page {
+  background: #fff;
+  border-radius: 6px;
+  padding: var(--page-pad);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card-w));
+  grid-auto-rows: var(--card-h);
+  gap: var(--gap);
+  justify-content: center;
+}
+
+/* ===== Carta (estilo pergamino) ===== */
+.card {
+  width: var(--card-w);
+  height: var(--card-h);
+  position: relative;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  border: var(--border-w) solid #251911;
+  border-radius: var(--radius);
+  background: radial-gradient(circle at 50% 0%, #fff7dd 0 14%, transparent 42%),
+    linear-gradient(180deg, #fff8e9, var(--paper));
+  padding: 3mm;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 1.1mm;
+  border: 0.35mm solid var(--line);
+  border-radius: calc(var(--radius) - 1.2mm);
+  pointer-events: none;
+}
+
+.card__header {
+  display: grid;
+  grid-template-columns: 11mm 1fr auto;
+  gap: 2mm;
+  align-items: center;
+  min-height: 13mm;
+  border-bottom: 0.35mm solid var(--line);
+  padding: 0 1mm 2mm;
+  position: relative;
+  z-index: 1;
+}
+.card--feat .card__header,
+.card:not(:has(.card__icon)) .card__header {
+  grid-template-columns: 1fr auto;
+}
+.card__icon {
+  width: 10mm;
+  height: 10mm;
+  border-radius: 50%;
+  border: 0.35mm solid var(--line);
+  background: #ead7a8;
+  object-fit: cover;
+}
+.card__title {
+  font-size: calc(11.5pt * var(--font-scale));
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+.card__badge {
+  min-width: 8mm;
+  height: 8mm;
+  padding: 0 1.5mm;
+  border-radius: 4mm;
+  display: grid;
+  place-items: center;
+  background: #2a1b13;
+  color: #fff2d1;
+  font: 800 calc(9pt * var(--font-scale)) "Montserrat", sans-serif;
+}
+.card__subtitle {
+  margin-top: 1.5mm;
+  text-align: center;
+  color: var(--card-accent);
+  font-size: calc(7.5pt * var(--font-scale));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.card__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2mm;
+  margin-top: 2mm;
+  font-family: "Montserrat", sans-serif;
+  font-size: calc(6.8pt * var(--font-scale));
+  position: relative;
+  z-index: 1;
+}
+.card__box {
+  border: 0.25mm solid #b18b58;
+  border-radius: 1.5mm;
+  padding: 1mm;
+  background: #fff8e8aa;
+  min-height: 8mm;
+}
+.card__box b {
+  display: block;
+  font-size: calc(5.8pt * var(--font-scale));
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+  margin-bottom: 0.3mm;
+}
+
+.card__text {
+  margin-top: 2mm;
+  padding: 0 1mm;
+  font-size: calc(7.8pt * var(--font-scale));
+  line-height: 1.18;
+  position: relative;
+  z-index: 1;
+}
+.card__text p {
+  margin: 0 0 1.2mm;
+}
+.card__text strong,
+.card__text b {
+  color: var(--card-accent);
+}
+.card__text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1mm 0;
+  font-size: 0.9em;
+}
+.card__text th,
+.card__text td {
+  border: 0.2mm solid #b18b58;
+  padding: 0.4mm 0.8mm;
+  text-align: left;
+}
+.card__text ul,
+.card__text ol {
+  margin: 0 0 1mm;
+  padding-left: 4mm;
+}
+
+.card__footer {
+  position: absolute;
+  left: 4mm;
+  right: 4mm;
+  bottom: 3mm;
+  display: flex;
+  justify-content: space-between;
+  gap: 2mm;
+  border-top: 0.25mm solid #b18b58;
+  padding-top: 1mm;
+  color: var(--muted);
+  font: calc(6.3pt * var(--font-scale)) "Montserrat", sans-serif;
+  z-index: 1;
+}
+
+.site-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ===== Impresión ===== */
+@media print {
+  body {
+    background: #fff;
+  }
+  .topbar,
+  .config,
+  .manual,
+  .error,
+  .char-bar,
+  .site-footer,
+  .link-btn {
+    display: none !important;
+  }
+  .layout {
+    display: block;
+  }
+  .content {
+    padding: 0;
+  }
+  .page {
+    padding: 0;
+    border-radius: 0;
+    gap: var(--gap);
+  }
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .config {
+    position: static;
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}
