@@ -45,13 +45,15 @@ export function unwrap(raw: any): any {
 export function parseCharacter(raw: any): ParsedCharacter {
   const data = unwrap(raw);
   const info = extractInfo(data);
-  const cards: Card[] = ensureUniqueIds([
-    ...extractSpells(data),
-    ...extractWeapons(data),
-    ...extractArmor(data),
-    ...extractEquipment(data),
-    ...extractFeats(data),
-  ]);
+  const cards: Card[] = ensureUniqueIds(
+    dedupeCards([
+      ...extractSpells(data),
+      ...extractWeapons(data),
+      ...extractArmor(data),
+      ...extractEquipment(data),
+      ...extractFeats(data),
+    ]),
+  );
   // Las cartas sin icono usan la foto del personaje como respaldo.
   if (info.imageUrl) {
     for (const card of cards) {
@@ -59,6 +61,23 @@ export function parseCharacter(raw: any): ParsedCharacter {
     }
   }
   return { info, cards };
+}
+
+/**
+ * Elimina cartas repetidas (misma categoría y nombre). Pasa, por ejemplo, con
+ * las armaduras que aparecen a la vez en `items.armaduras` y en `protections`,
+ * o con un conjuro listado en varios grupos del libro.
+ */
+function dedupeCards(cards: Card[]): Card[] {
+  const seen = new Set<string>();
+  const out: Card[] = [];
+  for (const card of cards) {
+    const key = `${card.category}|${card.name.trim().toLowerCase()}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(card);
+  }
+  return out;
 }
 
 /**
