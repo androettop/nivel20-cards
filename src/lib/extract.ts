@@ -260,6 +260,10 @@ function toEquipmentCard(item: any): Card {
 function extractFeats(data: any): Card[] {
   const sources: any[] = [
     ...(data?.feats ?? []),
+    // Rasgos de cada profesión/clase (p. ej. los del Druida) y su arquetipo.
+    ...(data?.professions ?? []).flatMap((p: any) =>
+      (p?.feats ?? []).map((f: any) => ({ ...f, _professionName: p?.name })),
+    ),
     ...(data?.race_feats ?? []),
     ...(data?.other_feats ?? []),
     ...(data?.custom_feats ?? []),
@@ -281,10 +285,13 @@ function toFeatCard(feat: any): Card {
     id: `feat-${feat.id ?? feat.name}`,
     category: "feat",
     name: feat.name || "Rasgo",
-    subtitle: plain(feat.category) || "Dote / Rasgo",
+    subtitle:
+      plain(feat.category || feat.category_name || feat.group_name) ||
+      "Dote / Rasgo",
     meta: metas(meta("Requisitos", feat.prerequisites)),
     description: feat.summary || feat.description || "",
-    footerRight: plain(feat.source_name) || undefined,
+    footerRight:
+      plain(feat.source_name || feat._professionName) || undefined,
     sortKey: 0,
   };
 }

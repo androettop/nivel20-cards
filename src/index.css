@@ -121,6 +121,13 @@ body {
   border: 1px solid var(--border);
   color: var(--text-2);
 }
+.btn--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  line-height: 0;
+}
 
 .error {
   margin: 12px 20px 0;
