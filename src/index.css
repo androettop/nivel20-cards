@@ -172,14 +172,33 @@ body {
 }
 .config__group {
   border-top: 1px solid var(--border);
-  padding: 14px 0;
 }
-.config__group h3 {
-  margin: 0 0 10px;
+.config__group > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 12px 0;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: var(--accent-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.config__group > summary::-webkit-details-marker {
+  display: none;
+}
+.config__group > summary::after {
+  content: "▾";
+  color: var(--text-3);
+  transition: transform 0.15s ease;
+}
+.config__group[open] > summary::after {
+  transform: rotate(180deg);
+}
+.config__group[open] {
+  padding-bottom: 14px;
 }
 
 .field {
@@ -339,6 +358,12 @@ body {
   padding: 3mm;
   break-inside: avoid;
   page-break-inside: avoid;
+  /* Tonos derivados de los colores elegidos, para que TODO siga la paleta. */
+  --muted: color-mix(in srgb, var(--ink) 58%, var(--paper));
+  --line-soft: color-mix(in srgb, var(--line) 55%, var(--paper));
+  --box-bg: color-mix(in srgb, #fff 32%, var(--paper));
+  --badge-text: color-mix(in srgb, #fff 75%, var(--paper));
+  --icon-bg: color-mix(in srgb, var(--line) 28%, var(--paper));
 }
 
 /* Fondo opcional con el icono de la carta (desenfocado, cover y con zoom). */
@@ -392,7 +417,7 @@ body {
   height: 10mm;
   border-radius: 50%;
   border: 0.35mm solid var(--line);
-  background: #ead7a8;
+  background: var(--icon-bg);
   object-fit: cover;
 }
 .card__title {
@@ -408,8 +433,8 @@ body {
   border-radius: 4mm;
   display: grid;
   place-items: center;
-  background: #2a1b13;
-  color: #fff2d1;
+  background: var(--card-edge);
+  color: var(--badge-text);
   font: 800 calc(9pt * var(--font-scale)) "Montserrat", sans-serif;
 }
 .card__subtitle {
@@ -433,10 +458,10 @@ body {
   z-index: 1;
 }
 .card__box {
-  border: 0.25mm solid #b18b58;
+  border: 0.25mm solid var(--line-soft);
   border-radius: 1.5mm;
   padding: 1mm;
-  background: #fff8e8aa;
+  background: var(--box-bg);
   min-height: 8mm;
 }
 .card__box b {
@@ -471,7 +496,7 @@ body {
 }
 .card__text th,
 .card__text td {
-  border: 0.2mm solid #b18b58;
+  border: 0.2mm solid var(--line-soft);
   padding: 0.4mm 0.8mm;
   text-align: left;
 }
@@ -489,7 +514,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 2mm;
-  border-top: 0.25mm solid #b18b58;
+  border-top: 0.25mm solid var(--line-soft);
   padding-top: 1mm;
   color: var(--muted);
   font: calc(6.3pt * var(--font-scale)) "Montserrat", sans-serif;

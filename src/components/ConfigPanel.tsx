@@ -32,8 +32,8 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
         </button>
       </div>
 
-      <section className="config__group">
-        <h3>Tamaño de carta</h3>
+      <details className="config__group">
+        <summary>Tamaño de carta</summary>
         <label className="field">
           <span>Preajuste</span>
           <select value={config.sizePreset} onChange={(e) => setSize(e.target.value)}>
@@ -62,10 +62,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             onChange={(v) => onChange({ cardHeight: v, sizePreset: "custom" })}
           />
         </div>
-      </section>
+      </details>
 
-      <section className="config__group">
-        <h3>Diseño</h3>
+      <details className="config__group">
+        <summary>Diseño</summary>
         <RangeField
           label="Separación entre cartas"
           value={config.gap}
@@ -111,10 +111,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           unit="×"
           onChange={(v) => onChange({ fontScale: v })}
         />
-      </section>
+      </details>
 
-      <section className="config__group">
-        <h3>Opciones</h3>
+      <details className="config__group">
+        <summary>Opciones</summary>
         <label className="check">
           <input
             type="checkbox"
@@ -139,10 +139,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           />
           Rellenar esquinas
         </label>
-      </section>
+      </details>
 
-      <section className="config__group">
-        <h3>Colores</h3>
+      <details className="config__group">
+        <summary>Colores</summary>
         <ColorField
           label="Borde"
           value={config.colors.edge}
@@ -168,10 +168,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           value={config.colors.line}
           onChange={(v) => onChange({ colors: { ...config.colors, line: v } })}
         />
-      </section>
+      </details>
 
-      <section className="config__group">
-        <h3>Fondo con el icono</h3>
+      <details className="config__group">
+        <summary>Fondo con el icono</summary>
         <label className="check">
           <input
             type="checkbox"
@@ -211,10 +211,10 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             />
           </>
         )}
-      </section>
+      </details>
 
-      <section className="config__group">
-        <h3>Categorías</h3>
+      <details className="config__group">
+        <summary>Categorías</summary>
         {CATEGORY_ORDER.map((cat) => (
           <label className="check" key={cat}>
             <input
@@ -227,7 +227,7 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
             <span className="count">{counts[cat]}</span>
           </label>
         ))}
-      </section>
+      </details>
     </aside>
   );
 }
