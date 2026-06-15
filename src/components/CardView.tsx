@@ -14,6 +14,9 @@ export function CardView({ card, config }: Props) {
     config.cardWidth,
     config.cardHeight,
     config.fontScale,
+    config.borderWidth,
+    config.showIcons,
+    config.boxBg,
   ]);
 
   const showIconBg = config.iconBg && !!card.iconUrl;
