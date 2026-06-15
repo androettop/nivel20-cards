@@ -322,6 +322,15 @@ body {
   pointer-events: none;
 }
 
+/* Esquinas rellenas: el borde negro exterior queda cuadrado, pero el marco
+   decorativo interno conserva el redondeado de --radius. */
+.page--square .card {
+  border-radius: 0;
+}
+.page--square .card::before {
+  border-radius: max(0.3mm, var(--radius));
+}
+
 .card__header {
   display: grid;
   grid-template-columns: 11mm 1fr auto;

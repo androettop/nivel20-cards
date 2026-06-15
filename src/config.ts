@@ -27,6 +27,8 @@ export interface Config {
   fontScale: number; // multiplicador del tamaño de fuente
   showIcons: boolean;
   autoFit: boolean;
+  /** Esquinas rellenas: el borde negro exterior queda cuadrado. */
+  fillCorners: boolean;
   categories: Record<CardCategory, boolean>;
 }
 
@@ -34,19 +36,20 @@ export const DEFAULT_CONFIG: Config = {
   sizePreset: "poker",
   cardWidth: 63,
   cardHeight: 88,
-  gap: 3,
-  radius: 4.2,
-  borderWidth: 1.4,
+  gap: 0,
+  radius: 4,
+  borderWidth: 3,
   pagePadding: 8,
   fontScale: 1,
   showIcons: true,
   autoFit: true,
+  fillCorners: false,
   categories: Object.fromEntries(
     CATEGORY_ORDER.map((c) => [c, true]),
   ) as Record<CardCategory, boolean>,
 };
 
-const STORAGE_KEY = "nivel20-cards-config";
+const STORAGE_KEY = "nivel20-cards-config-v2";
 
 export function loadConfig(): Config {
   try {

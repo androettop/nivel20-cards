@@ -131,6 +131,14 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           />
           Ajustar texto automáticamente
         </label>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={config.fillCorners}
+            onChange={(e) => onChange({ fillCorners: e.target.checked })}
+          />
+          Rellenar esquinas (borde exterior cuadrado)
+        </label>
       </section>
 
       <section className="config__group">

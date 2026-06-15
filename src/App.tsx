@@ -134,7 +134,10 @@ export default function App() {
                   No hay cartas para las categorías seleccionadas.
                 </p>
               ) : (
-                <div className="page" style={pageStyle}>
+                <div
+                  className={`page${config.fillCorners ? " page--square" : ""}`}
+                  style={pageStyle}
+                >
                   {visibleCards.map((card) => (
                     <CardView key={card.id} card={card} config={config} />
                   ))}
