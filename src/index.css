@@ -329,6 +329,32 @@ body {
   line-height: 1.7;
 }
 
+.promo {
+  margin-top: 32px;
+  padding: 18px 20px;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+}
+.promo h3 {
+  margin: 0 0 8px;
+  color: var(--accent-2);
+  font-size: 16px;
+}
+.promo p {
+  margin: 0 0 10px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.promo__btn {
+  display: inline-block;
+  margin-top: 4px;
+  text-decoration: none;
+}
+
 .char-bar {
   display: flex;
   align-items: center;

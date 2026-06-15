@@ -174,6 +174,28 @@ function EmptyState() {
       <p className="muted">
         Se generan cartas de {CATEGORY_ORDER.map((c) => CATEGORY_LABELS[c].toLowerCase()).join(", ")}.
       </p>
+
+      <section className="promo">
+        <h3>¿Conoces Nivel21?</h3>
+        <p>
+          <strong>Nivel21</strong> es una extensión de navegador que mejora tu
+          experiencia en Nivel20: añade atajos de teclado, tiradas con
+          ventaja/desventaja, auras y capas de tokens, mediciones persistentes,
+          utilidades para el DM, pantalla de referencia y mucho más.
+        </p>
+        <p className="muted">
+          Es un proyecto independiente de la comunidad, no oficial ni afiliado a
+          Nivel20 — igual que este generador de cartas.
+        </p>
+        <a
+          className="btn promo__btn"
+          href="https://github.com/androettop/nivel21"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ver Nivel21 en GitHub →
+        </a>
+      </section>
     </div>
   );
 }
