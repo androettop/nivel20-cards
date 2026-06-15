@@ -361,7 +361,6 @@ body {
   /* Tonos derivados de los colores elegidos, para que TODO siga la paleta. */
   --muted: color-mix(in srgb, var(--ink) 58%, var(--paper));
   --line-soft: color-mix(in srgb, var(--line) 55%, var(--paper));
-  --box-bg: color-mix(in srgb, #fff 32%, var(--paper));
   --badge-text: color-mix(in srgb, #fff 75%, var(--paper));
   --icon-bg: color-mix(in srgb, var(--line) 28%, var(--paper));
 }

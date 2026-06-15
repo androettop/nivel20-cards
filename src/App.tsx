@@ -72,6 +72,7 @@ export default function App() {
     "--ink": config.colors.ink,
     "--card-accent": config.colors.accent,
     "--line": config.colors.line,
+    "--box-bg": config.boxBg ? config.colors.box : "transparent",
   } as React.CSSProperties;
 
   return (

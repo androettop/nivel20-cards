@@ -31,6 +31,8 @@ export interface Config {
   fillCorners: boolean;
   /** Colores de la carta. */
   colors: CardColors;
+  /** Si las cajas de metadatos tienen fondo (si no, transparente). */
+  boxBg: boolean;
   /** Usar el icono de la carta como fondo. */
   iconBg: boolean;
   iconBgOpacity: number; // 0..1
@@ -45,6 +47,7 @@ export interface CardColors {
   ink: string; // texto
   accent: string; // acento (títulos de sección, negritas)
   line: string; // marco / líneas interiores
+  box: string; // fondo de las cajas (cuando está activado)
 }
 
 export const DEFAULT_COLORS: CardColors = {
@@ -53,6 +56,7 @@ export const DEFAULT_COLORS: CardColors = {
   ink: "#22170f",
   accent: "#8a2f22",
   line: "#6a4b2d",
+  box: "#fff8e8",
 };
 
 export const DEFAULT_CONFIG: Config = {
@@ -68,6 +72,7 @@ export const DEFAULT_CONFIG: Config = {
   autoFit: true,
   fillCorners: true,
   colors: DEFAULT_COLORS,
+  boxBg: false,
   iconBg: false,
   iconBgOpacity: 0.15,
   iconBgBlur: 2,

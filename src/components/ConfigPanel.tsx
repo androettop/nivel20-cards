@@ -168,6 +168,21 @@ export function ConfigPanel({ config, counts, onChange, onReset }: Props) {
           value={config.colors.line}
           onChange={(v) => onChange({ colors: { ...config.colors, line: v } })}
         />
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={config.boxBg}
+            onChange={(e) => onChange({ boxBg: e.target.checked })}
+          />
+          Fondo en las cajas
+        </label>
+        {config.boxBg && (
+          <ColorField
+            label="Color de las cajas"
+            value={config.colors.box}
+            onChange={(v) => onChange({ colors: { ...config.colors, box: v } })}
+          />
+        )}
       </details>
 
       <details className="config__group">
