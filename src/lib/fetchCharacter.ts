@@ -45,8 +45,22 @@ async function tryParse(res: Response): Promise<unknown> {
   try {
     return JSON.parse(text);
   } catch {
-    throw new Error("La respuesta no es un JSON válido.");
+    const preview = text.slice(0, 120).replace(/\s+/g, " ").trim();
+    throw new Error(
+      `La respuesta no es JSON${preview ? ` (empieza con: "${preview}…")` : ""}.`,
+    );
   }
+}
+
+/** Convierte un error de fetch en un mensaje legible. */
+function describeError(err: unknown): string {
+  if (err instanceof TypeError && /fetch/i.test(err.message)) {
+    // El navegador oculta el detalle por seguridad: casi siempre es CORS,
+    // un dominio inaccesible o falta de conexión.
+    return "no se pudo conectar (posible bloqueo CORS o sin conexión)";
+  }
+  if (err instanceof Error) return err.message;
+  return String(err);
 }
 
 export async function fetchCharacter(rawUrl: string): Promise<unknown> {
@@ -57,37 +71,66 @@ export async function fetchCharacter(rawUrl: string): Promise<unknown> {
   try {
     parsedUrl = new URL(url);
   } catch {
-    throw new Error("La URL no es válida.");
+    throw new Error(`La URL no es válida: "${rawUrl.trim()}"`);
   }
   if (!/^https?:$/.test(parsedUrl.protocol)) {
-    throw new Error("La URL debe empezar por http(s)://");
+    throw new Error("La URL debe empezar por http:// o https://");
   }
 
-  const attempts: string[] = [url, ...CORS_PROXIES.map((p) => p(url))];
-  let lastError: unknown;
+  const attempts: { label: string; url: string }[] = [
+    { label: "directo", url },
+    ...CORS_PROXIES.map((p, i) => ({ label: `proxy ${i + 1}`, url: p(url) })),
+  ];
+  const failures: string[] = [];
 
-  for (const attempt of attempts) {
-    try {
-      const res = await fetch(attempt, {
-        headers: { Accept: "application/json, text/plain, */*" },
-      });
-      if (!res.ok) {
-        lastError = new Error(`HTTP ${res.status} ${res.statusText}`);
-        continue;
+  console.groupCollapsed(`[nivel20-cards] Descargando personaje → ${url}`);
+  if (url !== rawUrl.trim()) {
+    console.info(`URL pegada: ${rawUrl.trim()}`);
+  }
+
+  try {
+    for (const attempt of attempts) {
+      const started = performance.now();
+      try {
+        console.info(`Intento (${attempt.label}): ${attempt.url}`);
+        const res = await fetch(attempt.url, {
+          headers: { Accept: "application/json, text/plain, */*" },
+        });
+        const ms = Math.round(performance.now() - started);
+
+        if (!res.ok) {
+          const msg = `HTTP ${res.status} ${res.statusText}`;
+          console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`);
+          failures.push(`${attempt.label}: ${msg}`);
+          continue;
+        }
+
+        const data = await tryParse(res);
+        if (!isProbablyCharacter(data)) {
+          const msg = "respondió, pero no parece un personaje de Nivel20";
+          console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`, data);
+          failures.push(`${attempt.label}: ${msg}`);
+          continue;
+        }
+
+        console.info(`  ✓ ${attempt.label}: OK (${ms} ms)`);
+        return data;
+      } catch (err) {
+        const ms = Math.round(performance.now() - started);
+        const msg = describeError(err);
+        console.warn(`  ✗ ${attempt.label}: ${msg} (${ms} ms)`, err);
+        failures.push(`${attempt.label}: ${msg}`);
       }
-      const data = await tryParse(res);
-      if (isProbablyCharacter(data)) return data;
-      lastError = new Error(
-        "El contenido no parece un personaje de Nivel20. ¿Es la URL del JSON?",
-      );
-    } catch (err) {
-      lastError = err;
     }
+  } finally {
+    console.groupEnd();
   }
 
+  console.error("[nivel20-cards] Todos los intentos fallaron:", failures);
   throw new Error(
-    lastError instanceof Error
-      ? `No se pudo obtener el personaje: ${lastError.message}`
-      : "No se pudo obtener el personaje.",
+    `No se pudo obtener el personaje desde ${url}.\n` +
+      failures.map((f) => `• ${f}`).join("\n") +
+      "\n\nRevisa que la URL sea correcta. Si el problema persiste, usa " +
+      '"Pega el JSON manualmente". (Detalles en la consola del navegador).',
   );
 }

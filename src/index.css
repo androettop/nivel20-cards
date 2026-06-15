@@ -163,6 +163,7 @@ body {
   border: 1px solid var(--accent);
   color: #ffd9d9;
   font-size: 14px;
+  white-space: pre-wrap;
 }
 
 /* ===== Layout ===== */
