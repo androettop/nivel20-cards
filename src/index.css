@@ -598,6 +598,18 @@ body {
 }
 
 @media (max-width: 760px) {
+  /* Apila el buscador debajo del logo en vez de a la derecha. */
+  .topbar {
+    grid-template-columns: 1fr;
+    grid-template-areas: "brand" "loader";
+  }
+  .loader {
+    width: 100%;
+  }
+  .loader input {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
   .layout {
     grid-template-columns: 1fr;
   }

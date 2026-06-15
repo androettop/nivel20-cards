@@ -27,6 +27,16 @@ function metas(...items: (MetaItem | null)[]): MetaItem[] {
   return items.filter((m): m is MetaItem => m !== null);
 }
 
+/** Añade las etiquetas (Alcance, Arrojadiza…) al final de la descripción. */
+function withTags(description: unknown, tags: unknown): string {
+  const base = String(description ?? "").trim();
+  if (Array.isArray(tags) && tags.length) {
+    const list = tags.map((t) => plain(t)).filter(Boolean).join(", ");
+    if (list) return `${base}\n\n**Etiquetas:** ${list}`.trim();
+  }
+  return base;
+}
+
 /** El JSON puede venir envuelto en printable_hash. */
 export function unwrap(raw: any): any {
   return raw?.printable_hash ?? raw;
@@ -138,9 +148,7 @@ function toWeaponCard(item: any): Card {
       versatile ? { label: "Versátil", value: plain(versatile) } : null,
       meta("Alcance", atk.range),
     ),
-    description: item.description || "",
-    footerLeft: plain(item.location_text) || undefined,
-    footerRight: Array.isArray(item.tags) ? item.tags.join(" · ") : undefined,
+    description: withTags(item.description, item.tags),
     sortKey: 0,
   };
 }
@@ -170,9 +178,7 @@ function toArmorCard(item: any): Card {
       meta("Penalización", armor.penalty),
       meta("Ranura", item.slot),
     ),
-    description: item.description || "",
-    footerLeft: plain(item.location_text) || undefined,
-    footerRight: Array.isArray(item.tags) ? item.tags.join(" · ") : undefined,
+    description: withTags(item.description, item.tags),
     sortKey: 0,
   };
 }
@@ -204,9 +210,7 @@ function toEquipmentCard(item: any): Card {
       qty ? { label: "Cantidad", value: plain(qty) } : null,
       meta("Ranura", item.slot),
     ),
-    description: item.description || "",
-    footerLeft: plain(item.location_text) || undefined,
-    footerRight: Array.isArray(item.tags) ? item.tags.join(" · ") : undefined,
+    description: withTags(item.description, item.tags),
     sortKey: 0,
   };
 }
