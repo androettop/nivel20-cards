@@ -471,6 +471,12 @@ body {
 
 /* ===== Impresión ===== */
 @media print {
+  /* Fuerza la impresión de fondos de color (pergamino, relleno de esquinas…),
+     que los navegadores omiten por defecto. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
   body {
     background: #fff;
   }
