@@ -13,8 +13,6 @@ const BASE = import.meta.env.BASE_URL;
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [manual, setManual] = useState("");
-  const [showManual, setShowManual] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [character, setCharacter] = useState<ParsedCharacter | null>(null);
@@ -36,15 +34,6 @@ export default function App() {
       setCharacter(null);
     } finally {
       setLoading(false);
-    }
-  }
-
-  function handleLoadManual() {
-    setError(null);
-    try {
-      setCharacter(parseCharacter(JSON.parse(manual)));
-    } catch {
-      setError("El JSON pegado no es válido.");
     }
   }
 
@@ -106,27 +95,7 @@ export default function App() {
             Imprimir
           </button>
         </div>
-
-        <button
-          className="link-btn"
-          onClick={() => setShowManual((v) => !v)}
-        >
-          {showManual ? "Ocultar" : "¿No carga? Pega el JSON manualmente"}
-        </button>
       </header>
-
-      {showManual && (
-        <div className="manual">
-          <textarea
-            placeholder="Pega aquí el JSON del personaje…"
-            value={manual}
-            onChange={(e) => setManual(e.target.value)}
-          />
-          <button className="btn" onClick={handleLoadManual}>
-            Usar este JSON
-          </button>
-        </div>
-      )}
 
       {error && <div className="error">{error}</div>}
 

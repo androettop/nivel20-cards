@@ -170,7 +170,7 @@ export async function fetchCharacter(rawUrl: string): Promise<unknown> {
   throw new Error(
     "No se pudo obtener el personaje.\n" +
       failures.map((f) => `• ${f}`).join("\n") +
-      '\n\nRevisa la URL. Si persiste, usa "Pega el JSON manualmente" ' +
+      "\n\nRevisa que la URL del personaje sea correcta " +
       "(detalles en la consola del navegador, F12).",
   );
 }

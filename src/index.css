@@ -50,7 +50,7 @@ body {
   padding: 12px 20px;
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-areas: "brand loader" "brand manual";
+  grid-template-areas: "brand loader";
   gap: 6px 20px;
   align-items: center;
 }
@@ -119,40 +119,6 @@ body {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
   color: var(--text-2);
-}
-
-.link-btn {
-  grid-area: manual;
-  justify-self: start;
-  background: none;
-  border: 0;
-  color: var(--text-3);
-  font: inherit;
-  font-size: 12px;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
-}
-
-.manual {
-  padding: 12px 20px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-}
-.manual textarea {
-  flex: 1;
-  min-height: 90px;
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
-  padding: 10px;
-  resize: vertical;
 }
 
 .error {
@@ -493,11 +459,9 @@ body {
   }
   .topbar,
   .config,
-  .manual,
   .error,
   .char-bar,
-  .site-footer,
-  .link-btn {
+  .site-footer {
     display: none !important;
   }
   .layout {
