@@ -259,14 +259,26 @@ function toEquipmentCard(item: any): Card {
 
 function extractFeats(data: any): Card[] {
   const sources: any[] = [
-    ...(data?.feats ?? []),
+    ...(data?.feats ?? []).map((f: any) => ({ ...f, _kind: "Dote" })),
     // Rasgos de cada profesión/clase (p. ej. los del Druida) y su arquetipo.
     ...(data?.professions ?? []).flatMap((p: any) =>
-      (p?.feats ?? []).map((f: any) => ({ ...f, _professionName: p?.name })),
+      (p?.feats ?? []).map((f: any) => ({
+        ...f,
+        _kind: "Rasgo de clase",
+        _professionName: p?.name,
+        _iconFallback: p?.portrait_url,
+      })),
     ),
-    ...(data?.race_feats ?? []),
-    ...(data?.other_feats ?? []),
-    ...(data?.custom_feats ?? []),
+    ...(data?.race_feats ?? []).map((f: any) => ({
+      ...f,
+      _kind: "Rasgo de especie",
+      _iconFallback: data?.race?.portrait_url,
+    })),
+    ...(data?.other_feats ?? []).map((f: any) => ({ ...f, _kind: "Otro rasgo" })),
+    ...(data?.custom_feats ?? []).map((f: any) => ({
+      ...f,
+      _kind: "Rasgo personalizado",
+    })),
   ];
   const seen = new Set<string>();
   const cards: Card[] = [];
@@ -285,9 +297,14 @@ function toFeatCard(feat: any): Card {
     id: `feat-${feat.id ?? feat.name}`,
     category: "feat",
     name: feat.name || "Rasgo",
+    iconUrl: feat.icon_url || feat._iconFallback || undefined,
     subtitle:
-      plain(feat.category || feat.category_name || feat.group_name) ||
-      "Dote / Rasgo",
+      [
+        feat._kind,
+        plain(feat.category || feat.category_name || feat.group_name),
+      ]
+        .filter(Boolean)
+        .join("\n") || "Dote / Rasgo",
     meta: metas(meta("Requisitos", feat.prerequisites)),
     description: feat.summary || feat.description || "",
     footerRight:

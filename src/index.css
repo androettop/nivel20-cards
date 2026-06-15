@@ -510,6 +510,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 700;
+  white-space: pre-line;
 }
 
 .card__meta {
