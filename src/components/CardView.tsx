@@ -54,8 +54,8 @@ export function CardView({ card, config }: Props) {
 
       {card.meta.length > 0 && (
         <section className="card__meta">
-          {card.meta.map((m) => (
-            <div className="card__box" key={m.label}>
+          {card.meta.map((m, i) => (
+            <div className="card__box" key={`${m.label}-${i}`}>
               <b>{m.label}</b>
               {m.value}
             </div>

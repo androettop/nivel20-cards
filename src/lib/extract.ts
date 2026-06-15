@@ -45,14 +45,35 @@ export function unwrap(raw: any): any {
 export function parseCharacter(raw: any): ParsedCharacter {
   const data = unwrap(raw);
   const info = extractInfo(data);
-  const cards: Card[] = [
+  const cards: Card[] = ensureUniqueIds([
     ...extractSpells(data),
     ...extractWeapons(data),
     ...extractArmor(data),
     ...extractEquipment(data),
     ...extractFeats(data),
-  ];
+  ]);
+  // Las cartas sin icono usan la foto del personaje como respaldo.
+  if (info.imageUrl) {
+    for (const card of cards) {
+      if (!card.iconUrl) card.iconUrl = info.imageUrl;
+    }
+  }
   return { info, cards };
+}
+
+/**
+ * Garantiza ids únicos para usarlos como `key` en React. Dos objetos con el
+ * mismo nombre (p. ej. dos "Daga") generarían la misma key, lo que provoca
+ * cartas duplicadas o intercambiadas al filtrar/ordenar.
+ */
+function ensureUniqueIds(cards: Card[]): Card[] {
+  const seen = new Map<string, number>();
+  for (const card of cards) {
+    const n = (seen.get(card.id) ?? 0) + 1;
+    seen.set(card.id, n);
+    if (n > 1) card.id = `${card.id}__${n}`;
+  }
+  return cards;
 }
 
 function extractInfo(data: any): CharacterInfo {
