@@ -441,7 +441,6 @@ body {
   position: relative;
   z-index: 1;
 }
-.card--feat .card__header,
 .card:not(:has(.card__icon)) .card__header {
   grid-template-columns: 1fr auto;
 }
